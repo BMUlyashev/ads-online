@@ -60,8 +60,8 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             })
     @PatchMapping("/me")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(user));
+    public ResponseEntity<User> updateUser(@RequestBody User user, Authentication authentication) {
+        return ResponseEntity.ok(userService.updateUser(user, authentication));
     }
 
     @Operation(summary = "setPassword", description = "Изменение пароля пользователя", tags = {"Пользователи"},

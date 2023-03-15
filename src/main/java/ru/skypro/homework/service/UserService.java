@@ -17,7 +17,7 @@ public interface UserService {
      * обновить пользователя
      * @param
      */
-    User updateUser(User user);
+    User updateUser(User user, Authentication authentication);
 
     /**
      * установить новый пароль пользователя

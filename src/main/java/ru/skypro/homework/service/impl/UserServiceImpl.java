@@ -33,16 +33,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
-        UserEntity userEntity = userRepository.findById(user.getId())
-                .orElseThrow(() -> new UserNotFoundException(user.getId()));
-        userEntity.setEmail(user.getEmail());
+    public User updateUser(User user, Authentication authentication) {
+        UserEntity userEntity = userRepository.findUserEntityByEmail(authentication.getName())
+                .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         userEntity.setFirstName(user.getFirstName());
         userEntity.setLastName(user.getLastName());
         userEntity.setPhone(user.getPhone());
-        userEntity.setRegDate(LocalDateTime.parse(user.getRegDate()));
-        userRepository.save(userEntity);
-        return userMapper.toDTO(userEntity);
+        return userMapper.toDTO(userRepository.save(userEntity));
     }
 
     @Override
