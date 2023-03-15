@@ -25,8 +25,8 @@ public class ExceptionHandler {
                 .body(String.format("Комментарий c id = %d  не найдено", e.getCommentId()));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotForbiddenException.class)
-    public ResponseEntity<String> handleUserNotForbiddenException(UserNotForbiddenException e) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserForbiddenException.class)
+    public ResponseEntity<String> handleUserNotForbiddenException(UserForbiddenException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(String.format("Пользователю c id = %d  запрещено редактировать комментарий", e.getId()));
     }

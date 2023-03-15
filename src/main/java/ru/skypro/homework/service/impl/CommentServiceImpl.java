@@ -7,7 +7,7 @@ import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.ResponseWrapperComment;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
-import ru.skypro.homework.exception.UserNotForbiddenException;
+import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.CommentEntity;
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
             return commentMapper.modelToDto(commentRepository.save(findComment));
 
         } else {
-            throw new UserNotForbiddenException(findUser.getId());
+            throw new UserForbiddenException(findUser.getId());
         }
     }
 

@@ -1,9 +1,9 @@
 package ru.skypro.homework.exception;
 
-public class UserNotForbiddenException extends RuntimeException {
+public class UserForbiddenException extends RuntimeException {
     private final int id;
 
-    public UserNotForbiddenException(int id) {
+    public UserForbiddenException(int id) {
         this.id = id;
     }
 

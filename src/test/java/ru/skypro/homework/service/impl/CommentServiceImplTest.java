@@ -9,10 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.ResponseWrapperComment;
-import ru.skypro.homework.dto.User;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
-import ru.skypro.homework.exception.UserNotForbiddenException;
+import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.AdsEntity;
@@ -193,7 +192,7 @@ class CommentServiceImplTest {
         when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.ofNullable(commentEntity1));
 
         assertThatThrownBy(() -> out.updateComment(1, 1, comment1, authentication))
-                .isInstanceOf(UserNotForbiddenException.class);
+                .isInstanceOf(UserForbiddenException.class);
 
     }
 
