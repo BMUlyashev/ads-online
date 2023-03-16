@@ -22,9 +22,9 @@ public class UserEntity {
     private LocalDateTime regDate;
     private boolean adminRole;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<AdsEntity> adsList;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Collection<CommentEntity> commentEntities;
 }
