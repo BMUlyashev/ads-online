@@ -40,6 +40,19 @@ public class AdsController {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
+    @Operation(summary = "getAllAdsFilter", description = "Запрос списка всех объявлений по фильтру",
+            tags = {"Объявления"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Ok",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ResponseWrapperAds.class)))
+            })
+    @GetMapping(params = "filter")
+    public ResponseEntity<ResponseWrapperAds> getAllAdsFilter(@RequestParam String filter) {
+        return ResponseEntity.ok(adsService.getAllAdsFilter(filter));
+    }
+
     @Operation(summary = "addAds", description = "Добавление нового объявление",
             tags = {"Объявления"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
