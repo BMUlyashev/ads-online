@@ -170,7 +170,7 @@ class AdsServiceImplTest {
                 createAds(3, 3, "31"),
                 createAds(4, 4, "41")
         );
-        when(adsRepository.findByTitleContainingIgnoreCase("1")).thenReturn(adsEntityList);
+        when(adsRepository.findAllByFilter("1")).thenReturn(adsEntityList);
         ResponseWrapperAds expected = new ResponseWrapperAds();
         expected.setResults(adsList);
         ResponseWrapperAds actual = adsService.getAllAdsFilter("1");
