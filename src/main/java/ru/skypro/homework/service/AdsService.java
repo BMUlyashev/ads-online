@@ -59,4 +59,10 @@ public interface AdsService {
      * @return
      */
     ResponseWrapperAds getAdsMe(Authentication authentication);
+
+    /**
+     * Возращает список объявлений по фильтру
+     * @return
+     */
+    ResponseWrapperAds getAllAdsFilter(String filter);
 }

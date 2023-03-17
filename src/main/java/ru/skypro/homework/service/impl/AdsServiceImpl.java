@@ -76,4 +76,13 @@ public class AdsServiceImpl implements AdsService {
         responseWrapperAds.setCount(responseWrapperAds.getResults().size());
         return responseWrapperAds;
     }
+
+    @Override
+    public ResponseWrapperAds getAllAdsFilter(String filter) {
+        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+        responseWrapperAds.setResults(adsMapper.adsEntityToAdsList(adsRepository.findByTitleContainingIgnoreCase(filter)));
+        int countAds = responseWrapperAds.getResults().size();
+        responseWrapperAds.setCount(countAds);
+        return responseWrapperAds;
+    }
 }

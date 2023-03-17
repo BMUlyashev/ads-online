@@ -157,6 +157,28 @@ class AdsServiceImplTest {
     }
 
     @Test
+    void getFilterAds() {
+        List<AdsEntity> adsEntityList = List.of(
+                createAdsEntity(1, "1", "1", 1),
+                createAdsEntity(2, "2", "21", 2),
+                createAdsEntity(3, "3", "31", 3),
+                createAdsEntity(4, "4", "41", 4)
+        );
+        List<Ads> adsList = List.of(
+                createAds(1, 1, "1"),
+                createAds(2, 2, "21"),
+                createAds(3, 3, "31"),
+                createAds(4, 4, "41")
+        );
+        when(adsRepository.findByTitleContainingIgnoreCase("1")).thenReturn(adsEntityList);
+        ResponseWrapperAds expected = new ResponseWrapperAds();
+        expected.setResults(adsList);
+        ResponseWrapperAds actual = adsService.getAllAdsFilter("1");
+        assertThat(actual.getCount()).isEqualTo(4);
+        assertThat(actual.getResults()).isEqualTo(expected.getResults());
+    }
+
+    @Test
     void getAdsMe() {
         UserEntity user = createUser(1, "testFirstName", "testLastName", "test@test.com", "89211234578");
         List<AdsEntity> listAdsEntity = List.of(

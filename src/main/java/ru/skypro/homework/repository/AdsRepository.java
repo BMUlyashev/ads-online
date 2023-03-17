@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AdsRepository extends JpaRepository<AdsEntity, Integer> {
     List<AdsEntity> findAllByAuthor_Id(Integer id);
+
+    List<AdsEntity> findByTitleContainingIgnoreCase(String subTitle);
 }
