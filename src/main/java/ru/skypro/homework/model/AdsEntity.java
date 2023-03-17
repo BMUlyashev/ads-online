@@ -1,9 +1,6 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -24,7 +21,7 @@ public class AdsEntity {
     @JoinColumn(name ="author_id")
     private UserEntity author;
 
-    @OneToMany(mappedBy = "ads")
+    @OneToMany(mappedBy = "ads", cascade = CascadeType.ALL)
     private Collection<CommentEntity> commentEntities;
 
 }

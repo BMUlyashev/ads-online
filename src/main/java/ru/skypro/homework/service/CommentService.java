@@ -1,5 +1,6 @@
 package ru.skypro.homework.service;
 
+import org.springframework.security.core.Authentication;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.ResponseWrapperComment;
 import ru.skypro.homework.exception.CommentNotFoundException;
@@ -9,12 +10,13 @@ public interface CommentService {
     /**
      * Добавление нового комментария к объявлению.
      *
-     * @param id      - id объявления;
-     * @param comment - {@link Comment};
+     * @param id             - id объявления;
+     * @param comment        - {@link Comment};
+     * @param authentication - аутентификация пользователя;
      * @return Созданный комментарий;
      * @throws AdsNotFoundException
      */
-    Comment addComment(Integer id, Comment comment);
+    Comment addComment(Integer id, Comment comment, Authentication authentication);
 
     /**
      * Обновление комментария.
@@ -25,7 +27,7 @@ public interface CommentService {
      * @return Обновленный комментарий;
      * @throws CommentNotFoundException
      */
-    Comment updateComment(Integer adId, Integer commentId, Comment comment);
+    Comment updateComment(Integer adId, Integer commentId, Comment comment, Authentication authentication);
 
     /**
      * Получения комментария по id.

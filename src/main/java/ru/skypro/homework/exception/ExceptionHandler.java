@@ -22,6 +22,12 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(CommentNotFoundException.class)
     public ResponseEntity<String> handleCommentsNotFoundException(CommentNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(String.format("Комментарий c id = %d  не найдено", e.getCommentIdId()));
+                .body(String.format("Комментарий c id = %d  не найдено", e.getCommentId()));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserForbiddenException.class)
+    public ResponseEntity<String> handleUserNotForbiddenException(UserForbiddenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(String.format("Пользователю c id = %d  запрещено редактировать комментарий", e.getId()));
     }
 }

@@ -60,6 +60,7 @@ public class AdsController {
     public ResponseEntity<Ads> addAds(@RequestPart CreateAds properties,
                                       @RequestPart MultipartFile image,
                                       Authentication authentication) {
+        System.out.println(properties.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(adsService.addAds(properties, image, authentication));
     }
 
@@ -95,9 +96,9 @@ public class AdsController {
             })
     @PostMapping("/{id}/comments")
     public ResponseEntity<Comment> addComments(@PathVariable Integer id,
-                                               @RequestBody Comment comment) {
-        commentService.addComment(id, comment);
-        return ResponseEntity.ok(comment);
+                                               @RequestBody Comment comment,
+                                               Authentication authentication) {
+        return ResponseEntity.ok(commentService.addComment(id, comment, authentication));
     }
 
     @Operation(summary = "getFullAd", description = "Запрос полной информации по объявлению",
@@ -199,8 +200,9 @@ public class AdsController {
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
                                                  @PathVariable Integer commentId,
-                                                 @RequestBody Comment comment) {
-        return ResponseEntity.ok(commentService.updateComment(adId, commentId, comment));
+                                                 @RequestBody Comment comment,
+                                                 Authentication authentication) {
+        return ResponseEntity.ok(commentService.updateComment(adId, commentId, comment, authentication));
     }
 
     @Operation(summary = "getAdsMe", description = "Запрос списка всех объявлений пользователя",

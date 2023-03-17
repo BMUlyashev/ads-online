@@ -13,12 +13,16 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String text;
+
     private LocalDateTime createdAt;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ads_id")
     private AdsEntity ads;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 }
