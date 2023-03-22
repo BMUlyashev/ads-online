@@ -55,11 +55,10 @@ public class CommentServiceImpl implements CommentService {
         UserEntity findUser = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
 
-        if (findComment.getUser().getId().equals(findUser.getId())) {
+        if(validatePermission.isAdmin(findUser) || validatePermission.isCommentOwner(findUser, findComment)) {
             findComment.setText(comment.getText());
             findComment.setCreatedAt(LocalDateTime.now());
             return commentMapper.modelToDto(commentRepository.save(findComment));
-
         } else {
             throw new UserForbiddenException(findUser.getId());
         }

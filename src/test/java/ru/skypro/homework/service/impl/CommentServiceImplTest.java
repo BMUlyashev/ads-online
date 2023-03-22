@@ -170,7 +170,7 @@ class CommentServiceImplTest {
         comment3.setText("test2");
         comment3.setAuthor(1);
         comment3.setCreatedAt("05-01-2021 15:35:25");
-
+        user.setRole(Role.USER);
         String email = "test@test.com";
         when(authentication.getName()).thenReturn(email);
         when(userRepository.findUserEntityByEmail(email)).thenReturn(Optional.ofNullable(user));
@@ -193,10 +193,22 @@ class CommentServiceImplTest {
     }
 
     @Test
+    void updateCommentUserNotFound() {
+        String email = "test@test.com";
+        when(authentication.getName()).thenReturn(email);
+        when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.of(commentEntity1));
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> out.updateComment(1, 1, comment1, authentication))
+                .isInstanceOf(UserNotRegisterException.class);
+
+    }
+
+    @Test
     void updateCommentUserNotForbidden() {
         String email = "test@test.com";
         UserEntity user2 = new UserEntity();
         user2.setId(2);
+        user2.setRole(Role.USER);
         when(authentication.getName()).thenReturn(email);
         when(userRepository.findUserEntityByEmail(email)).thenReturn(Optional.ofNullable(user2));
         when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.ofNullable(commentEntity1));
