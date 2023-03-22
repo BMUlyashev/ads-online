@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,7 +21,10 @@ public class UserEntity {
     private String email;
     private String phone;
     private LocalDateTime regDate;
-    private boolean adminRole;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String password;
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<AdsEntity> adsList;

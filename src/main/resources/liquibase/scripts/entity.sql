@@ -35,3 +35,10 @@ alter table comments
 ADD column ads_id int references ads(id);
 alter table comments
 add column user_id int references "users"(id);
+
+--changeset bm:2
+alter table "users" rename column admin_role to role;
+alter table "users" alter column role type text;
+
+--changeset bm:3
+alter table "users" add column password text;

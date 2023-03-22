@@ -8,11 +8,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateAds;
-import ru.skypro.homework.dto.FullAds;
-import ru.skypro.homework.dto.ResponseWrapperAds;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.AdsNotFoundException;
+import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.AdsEntity;
@@ -46,6 +45,9 @@ class AdsServiceImplTest {
     @Spy
     AdsMapper adsMapper = Mappers.getMapper(AdsMapper.class);
 
+    @Spy
+    UserValidatePermission validatePermission = new UserValidatePermission();
+
     @Test
 //    @WithMockUser(username = "user@gmail.com", password = "password", roles = "USER")
     void addAds() {
@@ -76,25 +78,74 @@ class AdsServiceImplTest {
     }
 
     @Test
-    void deleteAds() {
+    void deleteAdsIfUserOwner() {
         AdsEntity adsEntity = createAdsEntity(2, "testDescription", "testTitle", 100);
+        UserEntity user = createUser(1, "test", "test", "test@mail.com", "1");
+        user.setRole(Role.USER);
+        adsEntity.setAuthor(user);
         when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        when(authentication.getName()).thenReturn("test@test.com");
         doNothing().when(adsRepository).deleteById(1);
-        adsService.deleteAds(1);
+        adsService.deleteAds(1, authentication);
         verify(adsRepository).deleteById(1);
     }
 
     @Test
-    void deleteAdsThrowException() {
-        when(adsRepository.findById(1)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> adsService.deleteAds(1)).isInstanceOf(AdsNotFoundException.class);
+    void deleteAdsIfUserAdmin() {
+        AdsEntity adsEntity = createAdsEntity(2, "testDescription", "testTitle", 100);
+        UserEntity user = createUser(1, "test", "test", "test@mail.com", "1");
+        user.setRole(Role.ADMIN);
+        when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        when(authentication.getName()).thenReturn("test@test.com");
+        doNothing().when(adsRepository).deleteById(1);
+        adsService.deleteAds(1, authentication);
+        verify(adsRepository).deleteById(1);
     }
 
     @Test
-    void updateAds() {
+    void deleteAdsThrowExceptionAdsNotFound() {
+        UserEntity user = createUser(1, "test", "test", "test@mail.com", "1");
+
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        when(adsRepository.findById(1)).thenReturn(Optional.empty());
+        when(authentication.getName()).thenReturn("test@test.com");
+        assertThatThrownBy(() -> adsService.deleteAds(1, authentication)).isInstanceOf(AdsNotFoundException.class);
+    }
+
+    @Test
+    void deleteAdsThrowExceptionUserNotFound() {
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.empty());
+        when(authentication.getName()).thenReturn("test@test.com");
+        assertThatThrownBy(() -> adsService.deleteAds(2, authentication)).isInstanceOf(UsernameNotFoundException.class);
+    }
+
+    @Test
+    void deleteAdsForbiddenUserException() {
+        AdsEntity adsEntity = createAdsEntity(2, "testDescription", "testTitle", 100);
+        UserEntity user = createUser(1, "test", "test", "test@mail.com", "1");
+        UserEntity owner = createUser(2, "owner", "owner", "owner@mail.com", "2");
+        user.setRole(Role.USER);
+        adsEntity.setAuthor(owner);
+        when(adsRepository.findById(2)).thenReturn(Optional.of(adsEntity));
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        when(authentication.getName()).thenReturn("test@test.com");
+
+        assertThatThrownBy(() -> adsService.deleteAds(2, authentication)).isInstanceOf(UserForbiddenException.class);
+    }
+
+    @Test
+    void updateAdsIfUserOwner() {
         AdsEntity adsEntity = createAdsEntity(1, "testDescription", "testTitle", 100);
+        UserEntity owner = createUser(2, "owner", "owner", "owner@mail.com", "2");
+        owner.setRole(Role.USER);
+        adsEntity.setAuthor(owner);
         CreateAds ads = createDtoCreateAds("testDescriptionNew", "testTitleNew", 200);
         AdsEntity adsEntityNew = createAdsEntity(1, "testDescriptionNew", "testTitleNew", 200);
+
+        when(authentication.getName()).thenReturn("owner@mail.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(owner));
         when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
         when(adsRepository.save(any(AdsEntity.class))).thenReturn(adsEntityNew);
 
@@ -105,10 +156,59 @@ class AdsServiceImplTest {
     }
 
     @Test
-    void updateAdsThrowException() {
+    void updateAdsIfUserAdmin() {
+        AdsEntity adsEntity = createAdsEntity(1, "testDescription", "testTitle", 100);
+        UserEntity owner = createUser(2, "owner", "owner", "owner@mail.com", "2");
+        UserEntity admin = createUser(1, "admin", "admin", "admin@mail.com", "2");
+        admin.setRole(Role.ADMIN);
+        adsEntity.setAuthor(owner);
         CreateAds ads = createDtoCreateAds("testDescriptionNew", "testTitleNew", 200);
+        AdsEntity adsEntityNew = createAdsEntity(1, "testDescriptionNew", "testTitleNew", 200);
+
+        when(authentication.getName()).thenReturn("admin@mail.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(admin));
+        when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
+        when(adsRepository.save(any(AdsEntity.class))).thenReturn(adsEntityNew);
+
+        Ads result = adsService.updateAds(1, ads, authentication);
+        assertThat(result.getPrice()).isEqualTo(200);
+        assertThat(result.getTitle()).isEqualTo("testTitleNew");
+        assertThat(result.getPk()).isEqualTo(1);
+    }
+
+    @Test
+    void updateAdsThrowExceptionAdsNotFound() {
+        CreateAds ads = createDtoCreateAds("testDescriptionNew", "testTitleNew", 200);
+        UserEntity owner = createUser(2, "owner", "owner", "owner@mail.com", "2");
+
+        when(authentication.getName()).thenReturn("owner@mail.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(owner));
         when(adsRepository.findById(1)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> adsService.updateAds(1, ads, authentication)).isInstanceOf(AdsNotFoundException.class);
+    }
+
+    @Test
+    void updateAdsThrowExceptionUserNotFound() {
+        CreateAds ads = createDtoCreateAds("testDescriptionNew", "testTitleNew", 200);
+
+        when(authentication.getName()).thenReturn("owner@mail.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> adsService.updateAds(1, ads, authentication)).isInstanceOf(UsernameNotFoundException.class);
+    }
+
+    @Test
+    void updateAdsThrowExceptionUserForbidden() {
+        CreateAds ads = createDtoCreateAds("testDescriptionNew", "testTitleNew", 200);
+        UserEntity user = createUser(1, "user", "user", "user@mail.com", "2");
+        UserEntity owner = createUser(2, "owner", "owner", "owner@mail.com", "2");
+        AdsEntity adsEntity = createAdsEntity(1, "testDescription", "testTitle", 100);
+        user.setRole(Role.USER);
+        adsEntity.setAuthor(owner);
+
+        when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
+        when(authentication.getName()).thenReturn("user@mail.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        assertThatThrownBy(() -> adsService.updateAds(1, ads, authentication)).isInstanceOf(UserForbiddenException.class);
     }
 
     @Test
