@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.ResponseWrapperComment;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.exception.UserForbiddenException;
@@ -46,6 +49,9 @@ class CommentServiceImplTest {
     AdsRepository adsRepository;
     @Mock
     Authentication authentication;
+
+    @Spy
+    UserValidatePermission permission = new UserValidatePermission();
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     private CommentEntity commentEntity1;
     private CommentEntity commentEntity2;
@@ -55,6 +61,7 @@ class CommentServiceImplTest {
     private Comment comment1;
     private Comment comment2;
     private UserEntity user;
+    private UserEntity user2;
 
 
     @BeforeEach
@@ -63,6 +70,9 @@ class CommentServiceImplTest {
         user.setId(1);
         user.setEmail("test@test.com");
 
+        user2 = new UserEntity();
+        user2.setId(2);
+        user2.setEmail("test2@test.com");
 
         comment1 = new Comment();
         comment1.setPk(1);
@@ -219,18 +229,46 @@ class CommentServiceImplTest {
     }
 
     @Test
-    void deleteComment() {
-
+    void deleteCommentIfOwner() {
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
         when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.ofNullable(commentEntity1));
-        out.deleteComment(1, 1);
+        when(authentication.getName()).thenReturn("test@mail.com");
+        user.setRole(Role.USER);
+        out.deleteComment(1, 1, authentication);
         verify(commentRepository, times(1)).deleteById(1);
-
     }
 
     @Test
+    void deleteCommentIfAdmin() {
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user2));
+        when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.ofNullable(commentEntity1));
+        when(authentication.getName()).thenReturn("test@mail.com");
+        user2.setRole(Role.ADMIN);
+        out.deleteComment(1, 1, authentication);
+        verify(commentRepository, times(1)).deleteById(1);
+    }
+    @Test
     void deleteCommentCommentNotFound() {
         when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> out.deleteComment(1, 1)).isInstanceOf(CommentNotFoundException.class);
+        assertThatThrownBy(() -> out.deleteComment(1, 1, authentication)).isInstanceOf(CommentNotFoundException.class);
+    }
+
+    @Test
+    void deleteCommentUserNotFound() {
+        when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.of(commentEntity1));
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.empty());
+        when(authentication.getName()).thenReturn("test@mail.com");
+        assertThatThrownBy(() -> out.deleteComment(1, 1, authentication)).isInstanceOf(UsernameNotFoundException.class);
+    }
+
+    @Test
+    void deleteCommentForbiddenException() {
+        when(commentRepository.findByAds_IdAndId(1, 1)).thenReturn(Optional.of(commentEntity1));
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user2));
+        when(authentication.getName()).thenReturn("test@mail.com");
+        user2.setRole(Role.USER);
+
+        assertThatThrownBy(() -> out.deleteComment(1, 1, authentication)).isInstanceOf(UserForbiddenException.class);
     }
 
     @Test

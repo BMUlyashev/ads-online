@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.ResponseWrapperComment;
@@ -28,6 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final AdsRepository adsRepository;
     private final UserRepository userRepository;
+    private final UserValidatePermission validatePermission;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
 
@@ -69,9 +71,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Integer adId, Integer commentId) {
-        findComment(adId, commentId);
-        commentRepository.deleteById(commentId);
+    public void deleteComment(Integer adId, Integer commentId, Authentication authentication) {
+        CommentEntity comment = findComment(adId, commentId);
+        UserEntity user = userRepository.findUserEntityByEmail(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
+        if (validatePermission.isAdmin(user) || validatePermission.isCommentOwner(user, comment)) {
+            commentRepository.deleteById(commentId);
+            return;
+        }
+        throw new UserForbiddenException(user.getId());
     }
 
     @Override

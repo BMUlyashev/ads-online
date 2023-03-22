@@ -189,8 +189,9 @@ public class AdsController {
             })
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComments(@PathVariable Integer adId,
-                                               @PathVariable Integer commentId) {
-        commentService.deleteComment(adId, commentId);
+                                               @PathVariable Integer commentId,
+                                               Authentication authentication) {
+        commentService.deleteComment(adId, commentId, authentication);
         return ResponseEntity.ok().build();
     }
 

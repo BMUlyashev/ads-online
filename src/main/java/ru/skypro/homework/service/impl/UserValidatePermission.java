@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.AdsEntity;
+import ru.skypro.homework.model.CommentEntity;
 import ru.skypro.homework.model.UserEntity;
 
 @Component
@@ -27,5 +28,16 @@ public class UserValidatePermission {
      */
     public boolean isAdsOwner(UserEntity user, AdsEntity ads) {
         return ads.getAuthor().equals(user);
+    }
+
+    /**
+     * Проверяет соответствие комментария и автора
+     *
+     * @param user    Сущность {@link UserEntity} пользователя
+     * @param comment Сущность {@link CommentEntity} комментария
+     * @return true - если user автор комментария comment
+     */
+    public boolean isCommentOwner(UserEntity user, CommentEntity comment) {
+        return comment.getUser().equals(user);
     }
 }

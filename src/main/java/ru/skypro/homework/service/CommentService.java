@@ -46,7 +46,7 @@ public interface CommentService {
      * @param commentId - id комментария;
      * @throws CommentNotFoundException
      */
-    void deleteComment(Integer adId, Integer commentId);
+    void deleteComment(Integer adId, Integer commentId, Authentication authentication);
 
     /**
      * Получения списка все комментариев к объявлению.
