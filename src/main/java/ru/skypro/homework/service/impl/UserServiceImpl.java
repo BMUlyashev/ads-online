@@ -6,15 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.User;
-import ru.skypro.homework.exception.AdsNotFoundException;
-import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +24,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUsers(Authentication authentication) {
         UserEntity userEntity = userRepository.findUserEntityByEmail(authentication.getName())
-                        .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
+                .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         return userMapper.toDTO(userEntity);
     }
 

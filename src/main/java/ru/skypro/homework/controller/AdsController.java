@@ -136,8 +136,8 @@ public class AdsController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     @DeleteMapping("/{id}")
-    public ResponseEntity removeAds(@PathVariable Integer id) {
-        adsService.deleteAds(id);
+    public ResponseEntity removeAds(@PathVariable Integer id, Authentication authentication) {
+        adsService.deleteAds(id, authentication);
         return ResponseEntity.noContent().build();
     }
 
@@ -189,8 +189,9 @@ public class AdsController {
             })
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComments(@PathVariable Integer adId,
-                                               @PathVariable Integer commentId) {
-        commentService.deleteComment(adId, commentId);
+                                               @PathVariable Integer commentId,
+                                               Authentication authentication) {
+        commentService.deleteComment(adId, commentId, authentication);
         return ResponseEntity.ok().build();
     }
 

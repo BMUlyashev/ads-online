@@ -26,7 +26,7 @@ public interface AdsService {
      * @param id
      * @throws AdsNotFoundException исключение, если запись с id не найдена
      */
-    void deleteAds(Integer id);
+    void deleteAds(Integer id, Authentication authentication);
 
     /**
      * Изменяет объявление
