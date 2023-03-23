@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.skypro.homework.model.UserEntity;
+import ru.skypro.homework.dto.SecurityUserDto;
 
 import java.util.Collection;
 import java.util.Set;
@@ -12,23 +12,23 @@ import java.util.Set;
 @AllArgsConstructor
 public class SecurityUser implements UserDetails {
 
-    private UserEntity userEntity;
+    private SecurityUserDto securityUserDto;
 
 
     @Override
     public String getUsername() {
-        return userEntity.getEmail();
+        return securityUserDto.getEmail();
     }
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return securityUserDto.getPassword();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(
-                new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().name())
+                new SimpleGrantedAuthority("ROLE_" + securityUserDto.getRole().name())
         );
     }
 

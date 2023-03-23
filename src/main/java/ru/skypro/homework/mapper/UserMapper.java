@@ -3,6 +3,7 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.skypro.homework.dto.RegisterReq;
+import ru.skypro.homework.dto.SecurityUserDto;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.model.UserEntity;
 
@@ -23,4 +24,6 @@ public interface UserMapper {
 
     @Mapping(target = "email", source = "username")
     UserEntity fromRegisterReq(RegisterReq registerReq);
+
+    SecurityUserDto toSecurityUserDto(UserEntity user);
 }
