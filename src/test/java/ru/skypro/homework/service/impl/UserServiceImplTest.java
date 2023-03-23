@@ -8,10 +8,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.UserMapper;
-import ru.skypro.homework.model.AdsEntity;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
 
@@ -20,7 +23,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -36,6 +39,8 @@ class UserServiceImplTest {
 
     @Spy
     UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    @Spy
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Test
     void getUsers() {
@@ -79,6 +84,37 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.updateUser(user, authentication)).isInstanceOf(UserNotRegisterException.class);
     }
 
+    @Test
+    void setPasswordThrowException() {
+        NewPassword password = createPassword("1", "2");
+        when(authentication.getName()).thenReturn("test@test.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> userService.setPassword(password, authentication)).isInstanceOf(UserNotRegisterException.class);
+    }
+
+    @Test
+    void setPassword() {
+        UserEntity user = createUser(1, "firstName", "lastName", "test@test.com", "89212221133");
+        user.setPassword("$2a$12$bwUFD4eVKNv.QLSPv/jYKe0vWAkAKWGMKejRQC3FN4SufBADHuJnS"); // "test"
+        NewPassword password = createPassword("test", "2");
+        when(authentication.getName()).thenReturn("test@test.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        NewPassword actual = userService.setPassword(password, authentication);
+        verify(userRepository, times(1)).save(any(UserEntity.class));
+        assertThat(actual.getNewPassword()).isEqualTo(password.getNewPassword());
+    }
+
+    @Test
+    void setPasswordWrongOldPassword() {
+        UserEntity user = createUser(1, "firstName", "lastName", "test@test.com", "89212221133");
+        user.setPassword("$2a$12$bwUFD4eVKNv.QLSPv/jYKe0vWAkAKWGMKejRQC3FN4SufBADHuJnS"); // "test"
+        NewPassword password = createPassword("wrong", "2");
+        when(authentication.getName()).thenReturn("test@test.com");
+        when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
+        assertThatThrownBy(() -> userService.setPassword(password, authentication)).isInstanceOf(UserForbiddenException.class);
+    }
+
+
     private UserEntity createUser(Integer id, String firstName, String lastName, String email, String phone) {
         UserEntity user = new UserEntity();
         user.setId(id);
@@ -97,5 +133,12 @@ class UserServiceImplTest {
         user.setEmail(email);
         user.setPhone(phone);
         return user;
+    }
+
+    private NewPassword createPassword(String oldPassword, String newPassword) {
+        NewPassword password = new NewPassword();
+        password.setCurrentPassword(oldPassword);
+        password.setNewPassword(newPassword);
+        return password;
     }
 }
