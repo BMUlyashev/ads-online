@@ -10,8 +10,6 @@ import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -40,7 +38,6 @@ public class AuthServiceImpl implements AuthService {
         UserEntity user = userMapper.fromRegisterReq(regReq);
         user.setRole(role);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRegDate(LocalDateTime.now());
         userRepository.save(user);
         return true;
     }

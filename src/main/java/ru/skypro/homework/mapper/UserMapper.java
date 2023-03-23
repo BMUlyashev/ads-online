@@ -12,10 +12,9 @@ import java.util.Collection;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "regDate", source = "regDate", dateFormat = "dd-MM-yyyy HH:mm:ss")
+
     UserEntity toEntity(User user);
 
-    @Mapping(target = "regDate", source = "regDate", dateFormat = "dd-MM-yyyy HH:mm:ss")
     User toDTO(UserEntity userEntity);
 
     Collection<UserEntity> toEntityList(Collection<User> user);

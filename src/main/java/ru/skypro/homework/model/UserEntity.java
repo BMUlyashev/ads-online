@@ -4,7 +4,6 @@ import lombok.Data;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class UserEntity {
     private String lastName;
     private String email;
     private String phone;
-    private LocalDateTime regDate;
     @Enumerated(EnumType.STRING)
     private Role role;
 
