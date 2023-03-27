@@ -73,7 +73,6 @@ public class AdsController {
     public ResponseEntity<Ads> addAds(@RequestPart CreateAds properties,
                                       @RequestPart MultipartFile image,
                                       Authentication authentication) {
-        System.out.println(properties.toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(adsService.addAds(properties, image, authentication));
     }
 

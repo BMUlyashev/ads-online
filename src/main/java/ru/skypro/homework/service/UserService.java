@@ -23,7 +23,7 @@ public interface UserService {
      * установить новый пароль пользователя
      * @param
      */
-    NewPassword setPassword(NewPassword newPassword);
+    NewPassword setPassword(NewPassword newPassword, Authentication authentication);
 
     /**
      * обновить фото пользователя

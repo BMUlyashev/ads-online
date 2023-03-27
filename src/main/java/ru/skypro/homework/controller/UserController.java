@@ -80,8 +80,8 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             })
     @PostMapping("/set_password")
-    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
-        return ResponseEntity.ok(userService.setPassword(newPassword));
+    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
+        return ResponseEntity.ok(userService.setPassword(newPassword, authentication));
     }
 
     @Operation(summary = "updateUserImage", description = "Обновление аватара пользователя", tags = {"Пользователи"},

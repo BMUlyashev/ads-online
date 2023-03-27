@@ -42,3 +42,6 @@ alter table "users" alter column role type text;
 
 --changeset bm:3
 alter table "users" add column password text;
+
+--changeset bm:4
+alter table "users" drop column reg_date;

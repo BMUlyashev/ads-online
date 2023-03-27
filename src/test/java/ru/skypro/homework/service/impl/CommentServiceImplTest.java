@@ -24,6 +24,7 @@ import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -78,13 +79,13 @@ class CommentServiceImplTest {
         comment1.setPk(1);
         comment1.setText("test1");
         comment1.setAuthor(1);
-        comment1.setCreatedAt("05-01-2021 15:33:25");
+        comment1.setCreatedAt(Instant.ofEpochMilli(1556175797428L));
 
         comment2 = new Comment();
         comment2.setPk(2);
         comment2.setText("test2");
         comment2.setAuthor(1);
-        comment2.setCreatedAt("05-01-2021 15:35:25");
+        comment2.setCreatedAt(Instant.ofEpochMilli(1556175797428L));
 
         commentEntity1 = new CommentEntity();
         commentEntity1.setId(1);
@@ -169,7 +170,7 @@ class CommentServiceImplTest {
         comment3.setPk(1);
         comment3.setText("test2");
         comment3.setAuthor(1);
-        comment3.setCreatedAt("05-01-2021 15:35:25");
+        comment3.setCreatedAt(Instant.ofEpochMilli(1556175797428L));
         user.setRole(Role.USER);
         String email = "test@test.com";
         when(authentication.getName()).thenReturn(email);
