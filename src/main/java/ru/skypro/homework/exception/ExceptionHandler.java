@@ -30,4 +30,10 @@ public class ExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(String.format("Пользователю c id = %d  запрещено редактировать комментарий", e.getId()));
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(AvatarNotFoundException.class)
+    public ResponseEntity<String> handleAvatarNotFoundException(AvatarNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(String.format("Аватар c id = %d  не найден", e.getId()));
+    }
 }

@@ -45,3 +45,14 @@ alter table "users" add column password text;
 
 --changeset bm:4
 alter table "users" drop column reg_date;
+
+--changeset bm:5
+create table avatars (
+    id serial primary key,
+    file_path text,
+    file_size bigint,
+    media_type text
+);
+
+--changeset bm:6
+alter table "users" add column avatar_id int references avatars(id);
