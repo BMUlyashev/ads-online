@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "ads_images")
 public class AdsImage {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "path")

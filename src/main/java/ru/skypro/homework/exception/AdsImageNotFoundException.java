@@ -1,9 +1,9 @@
 package ru.skypro.homework.exception;
-//?? проверить работу
-public class UserNotFoundException extends RuntimeException{
+
+public class AdsImageNotFoundException extends RuntimeException {
     private final int id;
 
-    public UserNotFoundException(int id) {
+    public AdsImageNotFoundException(int id) {
         this.id = id;
     }
 

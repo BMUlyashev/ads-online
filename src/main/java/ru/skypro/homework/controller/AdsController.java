@@ -13,8 +13,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.CommentService;
+
+import java.io.IOException;
 
 
 @CrossOrigin(value = "http://localhost:3000")
@@ -26,6 +29,7 @@ public class AdsController {
 
     private final AdsService adsService;
     private final CommentService commentService;
+    private final AdsImageService adsImageService;
 
     @Operation(summary = "getAllAds", description = "Запрос списка всех объявлений",
             tags = {"Объявления"},
@@ -72,7 +76,7 @@ public class AdsController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Ads> addAds(@RequestPart CreateAds properties,
                                       @RequestPart MultipartFile image,
-                                      Authentication authentication) {
+                                      Authentication authentication) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(adsService.addAds(properties, image, authentication));
     }
 
@@ -247,10 +251,12 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             })
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateAdsImage(@PathVariable Integer id,
-                                                 @RequestPart MultipartFile image) {
+    //  public ResponseEntity<byte[]> updateAdsImage(@PathVariable Integer id,
+    public ResponseEntity<Void> updateAdsImage(@PathVariable Integer id,
+                                               @RequestPart MultipartFile image,
+                                               Authentication authentication) {
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(adsImageService.updateAdsImage(id, image, authentication));
     }
 
 }

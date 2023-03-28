@@ -8,6 +8,8 @@ import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.exception.AdsNotFoundException;
 
+import java.io.IOException;
+
 public interface AdsService {
 
     /**
@@ -18,7 +20,7 @@ public interface AdsService {
      * @param authentication
      * @return Созданное объявление
      */
-    Ads addAds(CreateAds properties, MultipartFile image, Authentication authentication);
+    Ads addAds(CreateAds properties, MultipartFile image, Authentication authentication) throws IOException;
 
     /**
      * Удаляет запись из БД по id
