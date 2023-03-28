@@ -18,10 +18,13 @@ public class AdsEntity {
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="author_id")
+    @JoinColumn(name = "author_id")
     private UserEntity author;
 
     @OneToMany(mappedBy = "ads", cascade = CascadeType.ALL)
     private Collection<CommentEntity> commentEntities;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id")
+    private AdsImage image;
 }
