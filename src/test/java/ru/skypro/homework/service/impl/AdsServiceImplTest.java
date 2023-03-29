@@ -7,18 +7,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.AdsNotFoundException;
 import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.AdsEntity;
+import ru.skypro.homework.model.AdsImage;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +44,8 @@ class AdsServiceImplTest {
 
     @Mock
     UserRepository userRepository;
+    @Mock
+    AdsImageServiceImpl adsImageService;
 
     @Mock
     Authentication authentication;
@@ -50,22 +61,29 @@ class AdsServiceImplTest {
 
     @Test
 //    @WithMockUser(username = "user@gmail.com", password = "password", roles = "USER")
-    void addAds() {
+    void addAds() throws URISyntaxException, IOException {
         CreateAds ads = createDtoCreateAds("testDescription", "testTitle", 100);
         AdsEntity adsEntity = createAdsEntity(2, "testDescription", "testTitle", 100);
         UserEntity user = createUser(1, "testFirstName", "testLastName", "test@test.com", "89211234578");
         adsEntity.setAuthor(user);
+        Path path = Paths.get(AdsServiceImpl.class.getResource("11.gif").toURI());
+        String imagePath = path.getParent().toString();
+        MultipartFile image = new MockMultipartFile("file",
+                "test.gif", "image/gif", Files.readAllBytes(path));
+        AdsImage adsImage = new AdsImage(1,imagePath, 10L, "png" );
         when(authentication.getName()).thenReturn("test@test.com");
         when(userRepository.findUserEntityByEmail(any(String.class)))
                 .thenReturn(Optional.of(user));
         when(adsRepository.save(any(AdsEntity.class))).thenReturn(adsEntity);
+        when(adsImageService.createAdsImage(image, adsEntity)).thenReturn(adsImage);
 
-       // Ads result = adsService.addAds(ads, null, authentication);
+        Ads result = adsService.addAds(ads, image, authentication);
 
-//        assertThat(result.getAuthor()).isEqualTo(1);
-//        assertThat(result.getPk()).isEqualTo(2);
-//        assertThat(result.getPrice()).isEqualTo(100);
-//        assertThat(result.getTitle()).isEqualTo("testTitle");
+        assertThat(result.getAuthor()).isEqualTo(1);
+        assertThat(result.getPk()).isEqualTo(2);
+        assertThat(result.getPrice()).isEqualTo(100);
+        assertThat(result.getTitle()).isEqualTo("testTitle");
+        assertThat(result.getImage()).isEqualTo("/ads/me/image/1");
     }
 
     @Test

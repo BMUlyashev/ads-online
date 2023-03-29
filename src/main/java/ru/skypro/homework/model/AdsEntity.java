@@ -27,4 +27,14 @@ public class AdsEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private AdsImage image;
+
+    public AdsEntity(){
+
+    }
+    public AdsEntity(Integer id, String title, String description, Integer price){
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+    }
 }

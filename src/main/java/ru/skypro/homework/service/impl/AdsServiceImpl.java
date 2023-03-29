@@ -45,7 +45,6 @@ public class AdsServiceImpl implements AdsService {
         AdsEntity adsEntity = adsMapper.createAdsToAdsEntity(properties);
         adsEntity.setAuthor(author);
         adsEntity = adsRepository.save(adsEntity);
-        //TODO image
         AdsImage adsImage = adsImageService.createAdsImage(image, adsEntity);
         adsEntity.setImage(adsImage);
         return adsMapper.adsEntityToAds(adsRepository.save(adsEntity));

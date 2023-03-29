@@ -38,8 +38,11 @@ public interface AdsMapper {
     FullAds adsEntityToFullAds(AdsEntity adsEntity);
 
     @Named("imageToString")
-    public static String imageToString(AdsImage adsImage){
-        return adsImage.getPath();
+    static String imageToString(AdsImage adsImage){
+        if (adsImage == null) {
+            return null;
+        }
+        return "/ads/me/image/" + adsImage.getId();
     }
     List<Ads> adsEntityToAdsList(List<AdsEntity> adsEntities);
 

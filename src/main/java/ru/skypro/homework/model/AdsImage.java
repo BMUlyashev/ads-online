@@ -24,4 +24,14 @@ public class AdsImage {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ads_id")
     private AdsEntity adsEntity;
+
+    public AdsImage(){
+    }
+
+    public AdsImage(Integer id, String path, Long fileSize, String mediaType) {
+        this.id = id;
+        this.path = path;
+        this.fileSize = fileSize;
+        this.mediaType = mediaType;
+    }
 }

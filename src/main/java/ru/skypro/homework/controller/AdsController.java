@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -251,12 +252,27 @@ public class AdsController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             })
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    //  public ResponseEntity<byte[]> updateAdsImage(@PathVariable Integer id,
     public ResponseEntity<Void> updateAdsImage(@PathVariable Integer id,
                                                @RequestPart MultipartFile image,
-                                               Authentication authentication) {
-
-        return ResponseEntity.ok(adsImageService.updateAdsImage(id, image, authentication));
+                                               Authentication authentication) throws IOException {
+        adsImageService.updateAdsImage(id, image, authentication);
+        return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "getAdsImage", description = "Запрос на получение картинки объявления",
+            tags = {"Объявления"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Ok",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            })
+    @GetMapping(value = "/me/image/{imageId}")
+    public ResponseEntity<byte[]> getAdsImage(@PathVariable Integer imageId) throws IOException {
+        Pair<String, byte[]> content = adsImageService.getAdsImage(imageId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(content.getFirst()))
+                .contentLength(content.getSecond().length)
+                .body(content.getSecond());
+    }
 }
