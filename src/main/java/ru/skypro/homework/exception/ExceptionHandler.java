@@ -36,4 +36,10 @@ public class ExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(String.format("Изображение объявления id = %d  не найдено", e.getId()));
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(AvatarNotFoundException.class)
+    public ResponseEntity<String> handleAvatarNotFoundException(AvatarNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(String.format("Аватар c id = %d  не найден", e.getId()));
+    }
 }
