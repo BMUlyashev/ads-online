@@ -56,8 +56,6 @@ media_type text
 );
 alter table ads
 add column image_id int references ads_images(id);
-alter table ads_images
-add column ads_id int references ads(id);
 
 --changeset bm:5
 create table avatars (

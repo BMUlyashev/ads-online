@@ -18,6 +18,7 @@ import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsImageService;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +47,6 @@ public class AdsImageServiceImpl implements AdsImageService {
         Path filePath = Paths.get(imageFolder).resolve(adsImage.getId() + extension);
         Files.createDirectories(filePath.getParent());
         Files.write(filePath, image.getBytes());
-        adsImage.setAdsEntity(adsEntity);
         adsImage.setPath(filePath.toString());
         return adsImageRepository.save(adsImage);
     }
@@ -57,7 +57,7 @@ public class AdsImageServiceImpl implements AdsImageService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
         AdsEntity adsEntity = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id));
         if (validatePermission.isAdmin(user) || validatePermission.isAdsOwner(user, adsEntity)) {
-            AdsImage adsImage = adsImageRepository.findAdsImageByAdsEntity_Id(id)
+            AdsImage adsImage = adsImageRepository.findById(adsEntity.getImage().getId())
                     .orElseThrow(() -> new AdsImageNotFoundException(id));
             Path filePath = Paths.get(adsImage.getPath());
             Files.write(filePath, image.getBytes());
@@ -72,6 +72,15 @@ public class AdsImageServiceImpl implements AdsImageService {
         AdsImage adsImage = adsImageRepository.findById(id)
                 .orElseThrow(() -> new AdsImageNotFoundException(id));
         return Pair.of(adsImage.getMediaType(), Files.readAllBytes(Paths.get(adsImage.getPath())));
+    }
+
+    @Override
+    public void deleteImage(Integer id) {
+        AdsImage findImage = adsImageRepository.findById(id)
+                .orElseThrow(() -> new AdsImageNotFoundException(id));
+        File deleteFile = Paths.get(findImage.getPath()).toFile();
+        deleteFile.delete();
+        adsImageRepository.deleteById(id);
     }
 
 

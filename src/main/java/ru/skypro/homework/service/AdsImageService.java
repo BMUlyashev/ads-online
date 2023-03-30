@@ -14,4 +14,6 @@ public interface AdsImageService {
     void updateAdsImage(Integer id, MultipartFile image, Authentication authentication) throws IOException;
 
     Pair<String,byte[]> getAdsImage(Integer adsId) throws IOException;
+
+    void deleteImage(Integer id);
 }

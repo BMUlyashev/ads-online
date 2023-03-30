@@ -22,7 +22,6 @@ import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -35,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class AdsServiceImplTest {
@@ -101,6 +101,8 @@ class AdsServiceImplTest {
         UserEntity user = createUser(1, "test", "test", "test@mail.com", "1");
         user.setRole(Role.USER);
         adsEntity.setAuthor(user);
+        AdsImage adsImage = new AdsImage();
+        adsEntity.setImage(adsImage);
         when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
         when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
         when(authentication.getName()).thenReturn("test@test.com");
@@ -113,6 +115,8 @@ class AdsServiceImplTest {
     void deleteAdsIfUserAdmin() {
         AdsEntity adsEntity = createAdsEntity(2, "testDescription", "testTitle", 100);
         UserEntity user = createUser(1, "test", "test", "test@mail.com", "1");
+        AdsImage adsImage = new AdsImage();
+        adsEntity.setImage(adsImage);
         user.setRole(Role.ADMIN);
         when(adsRepository.findById(1)).thenReturn(Optional.of(adsEntity));
         when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));

@@ -56,6 +56,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
         AdsEntity adsEntity = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id));
         if (validatePermission.isAdmin(user) || validatePermission.isAdsOwner(user, adsEntity)) {
+            adsImageService.deleteImage(adsEntity.getImage().getId());
             adsRepository.deleteById(id);
         } else {
             throw new UserForbiddenException(user.getId());
@@ -88,7 +89,6 @@ public class AdsServiceImpl implements AdsService {
         responseWrapperAds.setResults(adsMapper.adsEntityToAdsList(adsRepository.findAll()));
         int countAds = responseWrapperAds.getResults().size();
         responseWrapperAds.setCount(countAds);
-        //entity to ads
         return responseWrapperAds;
     }
 

@@ -21,9 +21,6 @@ public class AdsImage {
     @Column(name = "media_type")
     private String mediaType;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ads_id")
-    private AdsEntity adsEntity;
 
     public AdsImage(){
     }
