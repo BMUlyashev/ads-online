@@ -4,17 +4,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.service.AvatarService;
 import ru.skypro.homework.service.UserService;
+
+import java.io.IOException;
 
 
 @RestController
@@ -24,6 +26,7 @@ import ru.skypro.homework.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final AvatarService avatarService;
 
     @Operation(summary = "getUser", description = "Получение пользователя", tags = {"Пользователи"},
             responses = {
@@ -94,7 +97,17 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             })
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateUserImage(@RequestPart MultipartFile image) {
-        return ResponseEntity.ok(userService.updateUserImage(image));
+    public ResponseEntity<Void> updateUserImage(@RequestPart MultipartFile image, Authentication authentication) throws IOException {
+        avatarService.uploadAvatar(image, authentication);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me/image/{id}")
+    public ResponseEntity<byte[]> loadImage(@PathVariable Integer id) throws IOException {
+        Pair<String, byte[]> content = avatarService.readAvatar(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(content.getFirst()))
+                .contentLength(content.getSecond().length)
+                .body(content.getSecond());
     }
 }

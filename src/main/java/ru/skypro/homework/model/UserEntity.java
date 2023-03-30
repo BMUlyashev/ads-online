@@ -29,4 +29,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Collection<CommentEntity> commentEntities;
+
+    @OneToOne
+    private UserAvatar avatar;
 }
