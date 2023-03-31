@@ -140,6 +140,7 @@ class AvatarServiceImplTest {
         assertThatThrownBy(() -> avatarService.readAvatar(2)).isInstanceOf(AvatarNotFoundException.class);
     }
 
+
     private UserAvatar createAvatar(MultipartFile avatarFile, Integer id) throws IOException {
         UserAvatar avatar = new UserAvatar();
         avatar.setId(id);

@@ -46,12 +46,23 @@ alter table "users" add column password text;
 --changeset bm:4
 alter table "users" drop column reg_date;
 
+--changeset sev:5
+create table ads_images
+(
+id serial primary key,
+path text,
+file_size bigint,
+media_type text
+);
+alter table ads
+add column image_id int references ads_images(id);
+
 --changeset bm:5
 create table avatars (
-    id serial primary key,
-    file_path text,
-    file_size bigint,
-    media_type text
+                         id serial primary key,
+                         file_path text,
+                         file_size bigint,
+                         media_type text
 );
 
 --changeset bm:6

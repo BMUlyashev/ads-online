@@ -22,13 +22,19 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(CommentNotFoundException.class)
     public ResponseEntity<String> handleCommentsNotFoundException(CommentNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(String.format("Комментарий c id = %d  не найдено", e.getCommentId()));
+                .body(String.format("Комментарий c id = %d  не найден", e.getCommentId()));
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(UserForbiddenException.class)
     public ResponseEntity<String> handleUserNotForbiddenException(UserForbiddenException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(String.format("Пользователю c id = %d  запрещено редактировать комментарий", e.getId()));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(AdsImageNotFoundException.class)
+    public ResponseEntity<String> handleAdsImageNotFoundException(AdsImageNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(String.format("Изображение c id = %d  не найдено", e.getId()));
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(AvatarNotFoundException.class)

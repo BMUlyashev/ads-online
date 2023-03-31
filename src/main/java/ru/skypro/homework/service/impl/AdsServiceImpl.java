@@ -14,10 +14,14 @@ import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.AdsEntity;
+import ru.skypro.homework.model.AdsImage;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AdsService;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +34,18 @@ public class AdsServiceImpl implements AdsService {
     private final UserRepository userRepository;
 
     private final UserValidatePermission validatePermission;
+    private final AdsImageService adsImageService;
 
     @Override
-    public ru.skypro.homework.dto.Ads addAds(CreateAds properties, MultipartFile image, Authentication authentication) {
-        // mapping from dto to entity
+    public ru.skypro.homework.dto.Ads addAds(CreateAds properties,
+                                             MultipartFile image,
+                                             Authentication authentication) throws IOException {
         UserEntity author = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         AdsEntity adsEntity = adsMapper.createAdsToAdsEntity(properties);
         adsEntity.setAuthor(author);
-        //TODO image
+        AdsImage adsImage = adsImageService.createAdsImage(image);
+        adsEntity.setImage(adsImage);
         return adsMapper.adsEntityToAds(adsRepository.save(adsEntity));
     }
 
@@ -48,6 +55,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
         AdsEntity adsEntity = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id));
         if (validatePermission.isAdmin(user) || validatePermission.isAdsOwner(user, adsEntity)) {
+            adsImageService.deleteImage(adsEntity.getImage().getId());
             adsRepository.deleteById(id);
         } else {
             throw new UserForbiddenException(user.getId());
@@ -80,7 +88,6 @@ public class AdsServiceImpl implements AdsService {
         responseWrapperAds.setResults(adsMapper.adsEntityToAdsList(adsRepository.findAll()));
         int countAds = responseWrapperAds.getResults().size();
         responseWrapperAds.setCount(countAds);
-        //entity to ads
         return responseWrapperAds;
     }
 
