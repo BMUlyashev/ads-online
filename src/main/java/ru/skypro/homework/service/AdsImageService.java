@@ -9,9 +9,9 @@ import ru.skypro.homework.model.AdsImage;
 import java.io.IOException;
 
 public interface AdsImageService {
-    AdsImage createAdsImage(MultipartFile image, AdsEntity adsEntity) throws IOException;
+    AdsImage createAdsImage(MultipartFile image) throws IOException;
 
-    void updateAdsImage(Integer id, MultipartFile image, Authentication authentication) throws IOException;
+    void updateAdsImage(Integer adsId, MultipartFile image, Authentication authentication) throws IOException;
 
     Pair<String,byte[]> getAdsImage(Integer adsId) throws IOException;
 

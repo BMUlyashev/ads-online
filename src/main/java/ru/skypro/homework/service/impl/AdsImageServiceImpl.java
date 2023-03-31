@@ -38,7 +38,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
 
     @Override
-    public AdsImage createAdsImage(MultipartFile image, AdsEntity adsEntity) throws IOException {
+    public AdsImage createAdsImage(MultipartFile image) throws IOException {
         AdsImage adsImage = createImage(image);
         adsImage = adsImageRepository.save(adsImage);
         String extension = Optional.ofNullable(image.getOriginalFilename())
@@ -52,13 +52,13 @@ public class AdsImageServiceImpl implements AdsImageService {
     }
 
     @Override
-    public void updateAdsImage(Integer id, MultipartFile image, Authentication authentication) throws IOException {
+    public void updateAdsImage(Integer adsId, MultipartFile image, Authentication authentication) throws IOException {
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
-        AdsEntity adsEntity = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id));
+        AdsEntity adsEntity = adsRepository.findById(adsId).orElseThrow(() -> new AdsNotFoundException(adsId));
         if (validatePermission.isAdmin(user) || validatePermission.isAdsOwner(user, adsEntity)) {
             AdsImage adsImage = adsImageRepository.findById(adsEntity.getImage().getId())
-                    .orElseThrow(() -> new AdsImageNotFoundException(id));
+                    .orElseThrow(() -> new AdsImageNotFoundException(adsEntity.getImage().getId()));
             Path filePath = Paths.get(adsImage.getPath());
             Files.write(filePath, image.getBytes());
             adsImageRepository.save(adsImage);

@@ -34,7 +34,7 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(AdsImageNotFoundException.class)
     public ResponseEntity<String> handleAdsImageNotFoundException(AdsImageNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(String.format("Изображение объявления id = %d  не найдено", e.getId()));
+                .body(String.format("Изображение c id = %d  не найдено", e.getId()));
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(AvatarNotFoundException.class)

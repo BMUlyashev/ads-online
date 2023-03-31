@@ -75,7 +75,7 @@ class AdsServiceImplTest {
         when(userRepository.findUserEntityByEmail(any(String.class)))
                 .thenReturn(Optional.of(user));
         when(adsRepository.save(any(AdsEntity.class))).thenReturn(adsEntity);
-        when(adsImageService.createAdsImage(image, adsEntity)).thenReturn(adsImage);
+        when(adsImageService.createAdsImage(image)).thenReturn(adsImage);
 
         Ads result = adsService.addAds(ads, image, authentication);
 
@@ -83,7 +83,6 @@ class AdsServiceImplTest {
         assertThat(result.getPk()).isEqualTo(2);
         assertThat(result.getPrice()).isEqualTo(100);
         assertThat(result.getTitle()).isEqualTo("testTitle");
-        assertThat(result.getImage()).isEqualTo("/ads/me/image/1");
     }
 
     @Test

@@ -44,8 +44,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         AdsEntity adsEntity = adsMapper.createAdsToAdsEntity(properties);
         adsEntity.setAuthor(author);
-        adsEntity = adsRepository.save(adsEntity);
-        AdsImage adsImage = adsImageService.createAdsImage(image, adsEntity);
+        AdsImage adsImage = adsImageService.createAdsImage(image);
         adsEntity.setImage(adsImage);
         return adsMapper.adsEntityToAds(adsRepository.save(adsEntity));
     }

@@ -54,7 +54,6 @@ class AdsImageServiceImplTest {
     void createAdsImage() throws IOException, URISyntaxException {
         Path path = Paths.get(AdsImageServiceImpl.class.getResource("test.gif").toURI());
 
-
         String imagePath = path.getParent().toString();
         MultipartFile multipartFile = new MockMultipartFile("file",
                 "test.gif", "image/gif", Files.readAllBytes(path));
@@ -65,13 +64,14 @@ class AdsImageServiceImplTest {
 
         when(adsImageRepository.save(any())).thenReturn(image);
         ReflectionTestUtils.setField(out, "imageFolder", imagePath);
-        AdsImage actual = out.createAdsImage(multipartFile, adsEntity);
+        AdsImage actual = out.createAdsImage(multipartFile);
 
         Path path2 = Paths.get(AdsImageServiceImpl.class.getResource("1.gif").toURI());
         AdsImage expected = createImage(multipartFile2);
         expected.setPath(path2.toString());
 
         assertThat(actual).isEqualTo(expected);
+
     }
 
     @Test
@@ -102,11 +102,13 @@ class AdsImageServiceImplTest {
     @Test
     void updateAdsImageForbiddenException() {
         AdsEntity adsEntity = new AdsEntity(1, "Test", "Test2", 100);
+
         UserEntity user = createUser(1, "testFirstName", "testLastName", "test@test.com", "89211234578");
         when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
         when(adsRepository.findById(any())).thenReturn(Optional.of(adsEntity));
         when(userValidatePermission.isAdmin(any())).thenReturn(false);
         when(userValidatePermission.isAdsOwner(user, adsEntity)).thenReturn(false);
+        when(authentication.getName()).thenReturn("test@test.com");
         assertThatThrownBy(() -> out.updateAdsImage(1, null, authentication))
                 .isInstanceOf(UserForbiddenException.class);
     }
