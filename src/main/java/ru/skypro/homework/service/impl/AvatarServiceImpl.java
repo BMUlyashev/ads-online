@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.AvatarNotFoundException;
+import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AvatarRepository;
@@ -32,7 +33,7 @@ public class AvatarServiceImpl implements AvatarService {
     @Override
     public void uploadAvatar(MultipartFile image, Authentication authentication) throws IOException {
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName()).orElseThrow(
-                () -> new UsernameNotFoundException(authentication.getName())
+                () -> new UserNotRegisterException(authentication.getName())
         );
         UserAvatar avatar;
         if (user.getAvatar() == null) {

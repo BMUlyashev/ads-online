@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.AvatarNotFoundException;
+import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AvatarRepository;
@@ -47,7 +48,7 @@ class AvatarServiceImplTest {
 
 
     @Test
-    void uploadAvatarUserNotFoundException() throws URISyntaxException, IOException {
+    void uploadAvatarUserNotRegisterException() throws URISyntaxException, IOException {
         Path path = Paths.get(AvatarServiceImpl.class.getResource("test.gif").toURI());
 
         MultipartFile multipartFile = new MockMultipartFile("file",
@@ -58,7 +59,7 @@ class AvatarServiceImplTest {
         when(authentication.getName()).thenReturn("test@mail.com");
 
         assertThatThrownBy(() -> avatarService.uploadAvatar(multipartFile, authentication)).isInstanceOf(
-                UsernameNotFoundException.class
+                UserNotRegisterException.class
         );
     }
 
