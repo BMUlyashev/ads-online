@@ -9,62 +9,58 @@ import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.exception.AdsNotFoundException;
 
 import java.io.IOException;
-
+/**
+ * Интерфейс для работы с объявлениями
+ */
 public interface AdsService {
 
     /**
-     * Добавляет новое объявление
-     *
+     * Добавление нового объявление
      * @param properties     {@link CreateAds}
-     * @param image
-     * @param authentication
+     * @param image          - изображение;
+     * @param authentication - аутентификация пользователя;
      * @return Созданное объявление
      */
     Ads addAds(CreateAds properties, MultipartFile image, Authentication authentication) throws IOException;
 
     /**
      * Удаляет запись из БД по id
-     *
-     * @param id
-     * @throws AdsNotFoundException исключение, если запись с id не найдена
+     * @param id - id объявления;
+     * @throws AdsNotFoundException - Объявление не найдено
      */
     void deleteAds(Integer id, Authentication authentication);
 
     /**
-     * Изменяет объявление
-     *
-     * @param id
-     * @param createAds
-     * @return
+     * Обновления объявления
+     * @param id - id объявления;
+     * @param createAds - обновленные данные объявления;
+     * @return - обновленное объявление
      */
     Ads updateAds(Integer id, CreateAds createAds, Authentication authentication);
 
     /**
-     * Получает объявление по id
-     *
-     * @param id
-     * @return
+     * Запрос полного объявления по id
+     * @param id - id объявления;
+     * @return полное объявление
      */
     FullAds getFullAds(Integer id);
 
     /**
-     * Получаем все объявления
-     *
-     * @return
+     * Запрос всех объявлений
+     * @return список всех объявлений
      */
     ResponseWrapperAds getAllAds();
 
     /**
      * Возвращает объявления конкретного пользователя
-     *
-     * @param authentication
-     * @return
+     * @param authentication - аутентификация пользователя;
+     * @return список объявлений конкретного пользователя
      */
     ResponseWrapperAds getAdsMe(Authentication authentication);
 
     /**
-     * Возращает список объявлений по фильтру
-     * @return
+     * Возвращает список объявлений по фильтру
+     * @return список объявлений
      */
     ResponseWrapperAds getAllAdsFilter(String filter);
 }

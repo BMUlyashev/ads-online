@@ -5,7 +5,9 @@ import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.ResponseWrapperComment;
 import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.exception.AdsNotFoundException;
-
+/**
+ * Интерфейс для работы с комментариями пользователя
+ */
 public interface CommentService {
     /**
      * Добавление нового комментария к объявлению.
@@ -14,7 +16,7 @@ public interface CommentService {
      * @param comment        - {@link Comment};
      * @param authentication - аутентификация пользователя;
      * @return Созданный комментарий;
-     * @throws AdsNotFoundException
+     * @throws AdsNotFoundException - Объявление не найдено
      */
     Comment addComment(Integer id, Comment comment, Authentication authentication);
 
@@ -25,7 +27,7 @@ public interface CommentService {
      * @param commentId - id комментария;
      * @param comment   - {@link Comment};
      * @return Обновленный комментарий;
-     * @throws CommentNotFoundException
+     * @throws CommentNotFoundException - Комментарий не найден
      */
     Comment updateComment(Integer adId, Integer commentId, Comment comment, Authentication authentication);
 
@@ -34,8 +36,8 @@ public interface CommentService {
      *
      * @param adId - id объявления;
      * @param commentId - id комментария;
-     * @return Найденый комментарий;
-     * @throws CommentNotFoundException
+     * @return Найденный комментарий;
+     * @throws CommentNotFoundException - Комментарий не найден
      */
     Comment getComment(Integer adId, Integer commentId);
 
@@ -44,7 +46,7 @@ public interface CommentService {
      *
      * @param adId - id объявления;
      * @param commentId - id комментария;
-     * @throws CommentNotFoundException
+     * @throws CommentNotFoundException - Комментарий не найден
      */
     void deleteComment(Integer adId, Integer commentId, Authentication authentication);
 

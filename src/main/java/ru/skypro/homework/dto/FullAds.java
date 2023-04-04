@@ -2,6 +2,9 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+/**
+ * DTO полного объявления
+ */
 @Data
 public class FullAds {
     private String authorFirstName;

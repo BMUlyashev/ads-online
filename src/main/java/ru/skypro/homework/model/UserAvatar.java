@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+/**
+ * Сущность для аватарки пользователя
+ */
 @Data
 @Entity
 @Table(name = "avatars")

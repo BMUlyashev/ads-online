@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+/**
+ * Сущность для изображения объявления
+ */
 @Entity
 @Data
 @Table(name = "ads_images")

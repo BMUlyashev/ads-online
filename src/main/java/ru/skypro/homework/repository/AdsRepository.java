@@ -8,6 +8,9 @@ import ru.skypro.homework.model.AdsEntity;
 
 import java.util.List;
 
+/**
+ * Репозиторий для объявлений
+ */
 @Repository
 public interface AdsRepository extends JpaRepository<AdsEntity, Integer> {
     List<AdsEntity> findAllByAuthor_Id(Integer id);
