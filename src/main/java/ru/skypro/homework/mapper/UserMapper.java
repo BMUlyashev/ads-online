@@ -11,6 +11,9 @@ import ru.skypro.homework.model.UserEntity;
 
 import java.util.Collection;
 
+/**
+ * Маппер для DTO и сущности пользователя
+ */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 

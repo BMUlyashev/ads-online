@@ -13,6 +13,7 @@ import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AvatarRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AvatarService;
 
 import java.io.IOException;
@@ -20,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-
+/**
+ * Реализация интерфейса {@link AvatarService}
+ */
 @Service
 @RequiredArgsConstructor
 public class AvatarServiceImpl implements AvatarService {

@@ -24,7 +24,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
+/**
+ * Тесты для {@link UserServiceImpl}
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 

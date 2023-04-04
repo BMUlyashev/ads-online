@@ -5,7 +5,11 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.AdsEntity;
 import ru.skypro.homework.model.CommentEntity;
 import ru.skypro.homework.model.UserEntity;
+import ru.skypro.homework.service.AdsImageService;
 
+/**
+ * Сервис валидации пользователя
+ */
 @Component
 public class UserValidatePermission {
 

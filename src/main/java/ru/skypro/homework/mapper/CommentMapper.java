@@ -13,6 +13,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+/**
+ * Маппер для DTO и сущности комментария
+ */
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
     @Mapping(target = "id", source = "pk")

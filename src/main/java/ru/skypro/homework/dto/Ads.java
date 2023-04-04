@@ -2,6 +2,9 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+/**
+ *  DTO сокращенного объявления
+ */
 @Data
 public class Ads {
     private Integer author;

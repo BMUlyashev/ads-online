@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.time.Instant;
 
+/**
+ * DTO комментария
+ */
 @Data
 public class Comment {
     private Integer author;

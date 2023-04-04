@@ -16,12 +16,15 @@ import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.CommentService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
+/**
+ * Реализация интерфейса {@link CommentService}
+ */
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {

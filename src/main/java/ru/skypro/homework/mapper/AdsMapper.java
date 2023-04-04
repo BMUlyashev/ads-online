@@ -11,6 +11,9 @@ import ru.skypro.homework.model.AdsImage;
 
 import java.util.List;
 
+/**
+ * Маппер для DTO и сущности объявления
+ */
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 

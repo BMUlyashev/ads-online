@@ -8,8 +8,11 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AuthService;
-
+/**
+ * Реализация интерфейса {@link AuthService}
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {

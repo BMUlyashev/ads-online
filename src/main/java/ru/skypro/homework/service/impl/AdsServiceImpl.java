@@ -22,7 +22,9 @@ import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AdsService;
 
 import java.io.IOException;
-
+/**
+ * Реализация интерфейса {@link AdsService}
+ */
 @Service
 @RequiredArgsConstructor
 public class AdsServiceImpl implements AdsService {

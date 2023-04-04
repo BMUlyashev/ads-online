@@ -1,5 +1,7 @@
 package ru.skypro.homework.exception;
-
+/**
+ * Exception - Комментарий не найден
+ */
 public class CommentNotFoundException extends RuntimeException{
     private final int commentId;
 
