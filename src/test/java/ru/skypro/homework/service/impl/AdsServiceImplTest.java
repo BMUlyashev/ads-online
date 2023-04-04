@@ -35,7 +35,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doNothing;
-
+/**
+ * Тесты для {@link AdsServiceImpl}
+ */
 @ExtendWith(MockitoExtension.class)
 class AdsServiceImplTest {
 

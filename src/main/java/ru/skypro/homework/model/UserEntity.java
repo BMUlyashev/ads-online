@@ -7,6 +7,9 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Сущность пользователя
+ */
 @Entity
 @Data
 @Table(name = "users")

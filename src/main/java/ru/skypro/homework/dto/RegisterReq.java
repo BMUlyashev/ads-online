@@ -2,6 +2,9 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+/**
+ * DTO для регистрации пользователя
+ */
 @Data
 public class RegisterReq {
     private String username;

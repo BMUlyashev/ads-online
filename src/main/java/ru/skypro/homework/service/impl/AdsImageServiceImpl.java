@@ -25,6 +25,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+/**
+ * Реализация интерфейса {@link AdsImageService}
+ */
 @Service
 @RequiredArgsConstructor
 public class AdsImageServiceImpl implements AdsImageService {

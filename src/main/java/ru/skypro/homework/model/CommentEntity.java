@@ -5,7 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-
+/**
+ * Сущность для комментария к объявлению
+ */
 @Entity
 @Data
 @Table(name = "comments")
