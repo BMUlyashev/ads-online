@@ -8,10 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.util.Pair;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.AvatarNotFoundException;
+import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AvatarRepository;
@@ -29,6 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
 /**
  * Тесты для {@link AvatarServiceImpl}
  */
@@ -60,7 +61,7 @@ class AvatarServiceImplTest {
         when(authentication.getName()).thenReturn("test@mail.com");
 
         assertThatThrownBy(() -> avatarService.uploadAvatar(multipartFile, authentication)).isInstanceOf(
-                UsernameNotFoundException.class
+                UserNotRegisterException.class
         );
     }
 

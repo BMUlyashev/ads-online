@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.exception.AvatarNotFoundException;
+import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.model.UserAvatar;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.AvatarRepository;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AvatarService;
 
 import java.io.IOException;
@@ -20,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+
 /**
  * Реализация интерфейса {@link AvatarService}
  */
@@ -35,7 +35,7 @@ public class AvatarServiceImpl implements AvatarService {
     @Override
     public void uploadAvatar(MultipartFile image, Authentication authentication) throws IOException {
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName()).orElseThrow(
-                () -> new UsernameNotFoundException(authentication.getName())
+                () -> new UserNotRegisterException(authentication.getName())
         );
         UserAvatar avatar;
         if (user.getAvatar() == null) {
