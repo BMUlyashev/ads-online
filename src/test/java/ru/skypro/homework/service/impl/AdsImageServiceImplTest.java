@@ -52,28 +52,19 @@ class AdsImageServiceImplTest {
     AdsImageServiceImpl out;
 
 
-
     @Test
     void createAdsImage() throws IOException, URISyntaxException {
         Path path = Paths.get(AdsImageServiceImpl.class.getResource("test.gif").toURI());
-
         String imagePath = path.getParent().toString();
         MultipartFile multipartFile = new MockMultipartFile("file",
                 "test.gif", "image/gif", Files.readAllBytes(path));
-        MultipartFile multipartFile2 = new MockMultipartFile("file",
-                "1.gif", "image/gif", Files.readAllBytes(path));
-        AdsEntity adsEntity = new AdsEntity(1, "Test", "Test2", 100);
         AdsImage image = createImage(multipartFile);
-
         when(adsImageRepository.save(any())).thenReturn(image);
         ReflectionTestUtils.setField(out, "imageFolder", imagePath);
-        AdsImage actual = out.createAdsImage(multipartFile);
-
-        Path path2 = Paths.get(AdsImageServiceImpl.class.getResource("1.gif").toURI());
-        AdsImage expected = createImage(multipartFile2);
-        expected.setPath(path2.toString());
-
-        assertThat(actual).isEqualTo(expected);
+        File actualFile = new File(out.createAdsImage(multipartFile).getPath());
+        File expectedFile = new File(imagePath + "/test.gif");
+        assertThat(actualFile).hasSameBinaryContentAs(expectedFile);
+        actualFile.delete();
 
     }
 
@@ -100,6 +91,7 @@ class AdsImageServiceImplTest {
         File expectedFile = new File(imageNewPath + "/test.gif");
         assertThat(actualFile).hasSameBinaryContentAs(expectedFile);
         actualFile.delete();
+
     }
 
     @Test
@@ -118,35 +110,42 @@ class AdsImageServiceImplTest {
 
     @Test
     void getAdsImage() throws URISyntaxException, IOException {
-        Path path = Paths.get(AdsImageServiceImpl.class.getResource("1.gif").toURI());
+
+        Path path = Paths.get(AdsImageServiceImpl.class.getResource("11.gif").toURI());
         MultipartFile multipartFile = new MockMultipartFile("file",
                 "test.gif", "image/gif", Files.readAllBytes(path));
-        AdsEntity adsEntity = new AdsEntity(1, "Test", "Test2", 100);
         AdsImage image = createImage(multipartFile);
-        adsEntity.setImage(image);
         image.setPath(path.toString());
-        when(adsImageRepository.findById(any())).thenReturn(java.util.Optional.of(image));
         Pair<String, byte[]> expected = Pair.of(image.getMediaType(), multipartFile.getBytes());
-        Pair<String, byte[]> actual = out.getAdsImage(1);
-        assertThat(actual).isEqualTo(expected);
+        when(adsImageRepository.findById(any()))
+                .thenReturn(Optional.of(image));
+        assertThat(out.getAdsImage(11)).isEqualTo(expected);
     }
 
     @Test
     void getAdsImageNotFound() {
         when(adsImageRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> out.getAdsImage(11)).isInstanceOf(AdsImageNotFoundException.class);
+        assertThatThrownBy(() -> out.getAdsImage(1)).isInstanceOf(AdsImageNotFoundException.class);
     }
 
     @Test
     void deleteImage() throws IOException, URISyntaxException {
-        Path path = Paths.get(AdsImageServiceImpl.class.getResource("1.gif").toURI());
+        Path path = Paths.get(AdsImageServiceImpl.class.getResource("test.gif").toURI());
+        String imagePath = path.getParent().toString();
         MultipartFile multipartFile = new MockMultipartFile("file",
                 "test.gif", "image/gif", Files.readAllBytes(path));
-        AdsEntity adsEntity = new AdsEntity(1, "Test", "Test2", 100);
         AdsImage image = createImage(multipartFile);
-        adsEntity.setImage(image);
-        image.setPath(path.toString());
-        when(adsImageRepository.findById(any())).thenReturn(java.util.Optional.of(image));
+        when(adsImageRepository.save(any())).thenReturn(image);
+        ReflectionTestUtils.setField(out, "imageFolder", imagePath);
+        out.createAdsImage(multipartFile);
+        Path newPath = Paths.get(AdsImageServiceImpl.class.getResource("1.gif").toURI());
+        MultipartFile deleteMultipartFile = new MockMultipartFile("file",
+                "test.gif", "image/gif", Files.readAllBytes(path));
+        AdsEntity adsEntity = new AdsEntity(1, "Test", "Test2", 100);
+        AdsImage deleteImage = createImage(deleteMultipartFile);
+        adsEntity.setImage(deleteImage);
+        deleteImage.setPath(newPath.toString());
+        when(adsImageRepository.findById(any())).thenReturn(java.util.Optional.of(deleteImage));
         out.deleteImage(1);
         verify(adsImageRepository, times(1)).deleteById(1);
     }
