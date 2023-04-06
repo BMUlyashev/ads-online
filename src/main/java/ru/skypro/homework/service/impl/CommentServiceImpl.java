@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.List;
 /**
  * Реализация интерфейса {@link CommentService}
  */
+@Log
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -38,6 +40,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment addComment(Integer id, Comment comment, Authentication authentication) {
+
+        log.info("completed addComment");
 
         CommentEntity newComment = commentMapper.dtoToModel(comment);
 
@@ -53,6 +57,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment updateComment(Integer adId, Integer commentId, Comment comment, Authentication authentication) {
 
+        log.info("completed updateComment");
         CommentEntity findComment = findComment(adId, commentId);
 
         UserEntity findUser = userRepository.findUserEntityByEmail(authentication.getName())
@@ -69,11 +74,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment getComment(Integer adId, Integer commentId) {
+        log.info("completed getComment");
         return commentMapper.modelToDto(findComment(adId, commentId));
     }
 
     @Override
     public void deleteComment(Integer adId, Integer commentId, Authentication authentication) {
+        log.info("completed deleteComment");
         CommentEntity comment = findComment(adId, commentId);
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
@@ -86,6 +93,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public ResponseWrapperComment getAllCommentsByAd(Integer id) {
+        log.info("completed getAllCommentsByAd");
         List<CommentEntity> comments = commentRepository.findAllByAds_Id(id);
         ResponseWrapperComment findComments = new ResponseWrapperComment();
         findComments.setResults(commentMapper.modelToDto(comments));
@@ -94,6 +102,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentEntity findComment(Integer adId, Integer commentId) {
+        log.info("completed findComment");
         return commentRepository.findByAds_IdAndId(adId, commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
     }
