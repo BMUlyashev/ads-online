@@ -1,13 +1,15 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
+/**
+ * Сущность пользователя
+ */
 @Entity
 @Data
 @Table(name = "users")
@@ -20,12 +22,17 @@ public class UserEntity {
     private String lastName;
     private String email;
     private String phone;
-    private LocalDateTime regDate;
-    private boolean adminRole;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private String password;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<AdsEntity> adsList;
 
-  @OneToMany(mappedBy = "user")
-  private Collection<CommentEntity> commentEntities;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Collection<CommentEntity> commentEntities;
+
+    @OneToOne
+    private UserAvatar avatar;
 }
