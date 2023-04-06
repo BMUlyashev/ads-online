@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import ru.skypro.homework.service.UserService;
 /**
  * Реализация интерфейса {@link UserService}
  */
+@Log
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUsers(Authentication authentication) {
+        log.info("completed getUsers");
         UserEntity userEntity = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         return userMapper.toDTO(userEntity);
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user, Authentication authentication) {
+        log.info("completed updateUser");
         UserEntity userEntity = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         userEntity.setFirstName(user.getFirstName());
@@ -46,6 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public NewPassword setPassword(NewPassword newPassword, Authentication authentication) {
+        log.info("completed setPassword");
         UserEntity userEntity = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         if (passwordEncoder.matches(newPassword.getCurrentPassword(), userEntity.getPassword())) {

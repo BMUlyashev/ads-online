@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.io.IOException;
 /**
  * Реализация интерфейса {@link AdsService}
  */
+@Log
 @Service
 @RequiredArgsConstructor
 public class AdsServiceImpl implements AdsService {
@@ -42,6 +44,7 @@ public class AdsServiceImpl implements AdsService {
     public ru.skypro.homework.dto.Ads addAds(CreateAds properties,
                                              MultipartFile image,
                                              Authentication authentication) throws IOException {
+        log.info("completed addAds");
         UserEntity author = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         AdsEntity adsEntity = adsMapper.createAdsToAdsEntity(properties);
@@ -53,6 +56,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public void deleteAds(Integer id, Authentication authentication) {
+        log.info("completed deleteAds");
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
         AdsEntity adsEntity = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id));
@@ -66,6 +70,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public Ads updateAds(Integer id, CreateAds createAds, Authentication authentication) {
+        log.info("completed updateAds");
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
         AdsEntity adsEntity = adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id));
@@ -81,11 +86,13 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public FullAds getFullAds(Integer id) {
+        log.info("completed getFullAds");
         return adsMapper.adsEntityToFullAds(adsRepository.findById(id).orElseThrow(() -> new AdsNotFoundException(id)));
     }
 
     @Override
     public ResponseWrapperAds getAllAds() {
+        log.info("completed getAllAds");
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setResults(adsMapper.adsEntityToAdsList(adsRepository.findAll()));
         int countAds = responseWrapperAds.getResults().size();
@@ -95,6 +102,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public ResponseWrapperAds getAdsMe(Authentication authentication) {
+        log.info("completed getAdsMe");
         UserEntity author = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
@@ -105,6 +113,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public ResponseWrapperAds getAllAdsFilter(String filter) {
+        log.info("completed getAllAdsFilter");
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setResults(adsMapper.adsEntityToAdsList(adsRepository.findAllByFilter(filter)));
         int countAds = responseWrapperAds.getResults().size();

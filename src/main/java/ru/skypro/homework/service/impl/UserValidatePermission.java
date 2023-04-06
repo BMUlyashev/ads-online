@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.AdsEntity;
@@ -10,6 +12,8 @@ import ru.skypro.homework.service.AdsImageService;
 /**
  * Сервис валидации пользователя
  */
+
+@Log
 @Component
 public class UserValidatePermission {
 
@@ -20,6 +24,7 @@ public class UserValidatePermission {
      * @return true - если пользователь имеет права ADMIN;
      */
     public boolean isAdmin(UserEntity user) {
+        log.info("completed isAdmin");
         return user.getRole().equals(Role.ADMIN);
     }
 
@@ -31,6 +36,8 @@ public class UserValidatePermission {
      * @return true - если user автор объявления ads
      */
     public boolean isAdsOwner(UserEntity user, AdsEntity ads) {
+
+        log.info("completed isAdsOwner");
         return ads.getAuthor().equals(user);
     }
 
@@ -42,6 +49,7 @@ public class UserValidatePermission {
      * @return true - если user автор комментария comment
      */
     public boolean isCommentOwner(UserEntity user, CommentEntity comment) {
+        log.info("completed isCommentOwner");
         return comment.getUser().equals(user);
     }
 }

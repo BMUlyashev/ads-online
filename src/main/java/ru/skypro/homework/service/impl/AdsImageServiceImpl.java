@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,7 @@ import java.util.Optional;
 /**
  * Реализация интерфейса {@link AdsImageService}
  */
+@Log
 @Service
 @RequiredArgsConstructor
 public class AdsImageServiceImpl implements AdsImageService {
@@ -42,6 +44,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
     @Override
     public AdsImage createAdsImage(MultipartFile image) throws IOException {
+        log.info("completed createAdsImage");
         AdsImage adsImage = createImage(image);
         adsImage = adsImageRepository.save(adsImage);
         String extension = Optional.ofNullable(image.getOriginalFilename())
@@ -56,6 +59,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
     @Override
     public void updateAdsImage(Integer adsId, MultipartFile image, Authentication authentication) throws IOException {
+        log.info("completed updateAdsImage");
         UserEntity user = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + authentication.getName()));
         AdsEntity adsEntity = adsRepository.findById(adsId).orElseThrow(() -> new AdsNotFoundException(adsId));
@@ -72,6 +76,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
     @Override
     public Pair<String, byte[]> getAdsImage(Integer id) throws IOException {
+        log.info("completed getAdsImage");
         AdsImage adsImage = adsImageRepository.findById(id)
                 .orElseThrow(() -> new AdsImageNotFoundException(id));
         return Pair.of(adsImage.getMediaType(), Files.readAllBytes(Paths.get(adsImage.getPath())));
@@ -79,6 +84,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
     @Override
     public void deleteImage(Integer id) {
+        log.info("completed deleteImage");
         AdsImage findImage = adsImageRepository.findById(id)
                 .orElseThrow(() -> new AdsImageNotFoundException(id));
         File deleteFile = Paths.get(findImage.getPath()).toFile();
@@ -88,6 +94,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
 
     private AdsImage createImage(MultipartFile image) {
+        log.info("completed createImage");
         AdsImage adsImage = new AdsImage();
         adsImage.setMediaType(image.getContentType());
         adsImage.setFileSize(image.getSize());
