@@ -102,6 +102,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "getUserImage", description = "Получение аватара пользователя", tags = {"Пользователи"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Ok",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            })
     @GetMapping("/me/image/{id}")
     public ResponseEntity<byte[]> loadImage(@PathVariable Integer id) throws IOException {
         Pair<String, byte[]> content = avatarService.readAvatar(id);
