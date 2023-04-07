@@ -45,4 +45,9 @@ public class ExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(String.format("Аватар c id = %d  не найден", e.getId()));
     }
+    @org.springframework.web.bind.annotation.ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<String> handleIncorrectPasswordException(IncorrectPasswordException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(String.format("Ошибка: %s", e.getMessage()));
+    }
 }

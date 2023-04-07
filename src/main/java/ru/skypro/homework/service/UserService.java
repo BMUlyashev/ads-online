@@ -1,6 +1,5 @@
 package ru.skypro.homework.service;
 
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.User;
@@ -13,6 +12,7 @@ public interface UserService {
 
     /**
      * Получение пользователя
+     *
      * @param authentication - аутентификация пользователя;
      * @return Пользователь
      */
@@ -20,7 +20,8 @@ public interface UserService {
 
     /**
      * Обновление пользователя
-     * @param user Новые параметры пользователя;
+     *
+     * @param user           Новые параметры пользователя;
      * @param authentication - аутентификация пользователя;
      * @return Обновленный пользователь
      */
@@ -28,16 +29,11 @@ public interface UserService {
 
     /**
      * Установка нового пароля
-     * @param newPassword - новый пароль;
+     *
+     * @param newPassword    - новый пароль;
      * @param authentication - аутентификация пользователя;
      * @return новый пароль
      */
     NewPassword setPassword(NewPassword newPassword, Authentication authentication);
 
-    /**
-     * Обновление аватарки пользователя
-     * @param image - новая аватарка;
-     * @return аватарка
-     */
-    byte[] updateUserImage (MultipartFile image);
 }

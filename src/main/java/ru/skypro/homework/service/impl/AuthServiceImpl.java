@@ -6,11 +6,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.RegisterReq;
 import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.exception.IncorrectPasswordException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AuthService;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Реализация интерфейса {@link AuthService}
  */
@@ -37,6 +41,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean register(RegisterReq regReq, Role role) {
+        Pattern pattern = Pattern.compile("\\w{8,}");
+        Matcher matcher = pattern.matcher(regReq.getPassword());
+        if (!matcher.matches()) {
+            log.info("incorrect password format");
+            throw new IncorrectPasswordException("Неверный формат пароля");
+        }
         log.info("completed register");
 
         if (userRepository.findUserEntityByEmail(regReq.getUsername()).isPresent()) {
