@@ -5,16 +5,19 @@ import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.exception.IncorrectPasswordException;
 import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.UserService;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Реализация интерфейса {@link UserService}
  */
@@ -50,6 +53,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public NewPassword setPassword(NewPassword newPassword, Authentication authentication) {
+        Pattern pattern = Pattern.compile("\\w{8,}");
+        Matcher matcher = pattern.matcher(newPassword.getNewPassword());
+        if (!matcher.matches()) {
+            throw new IncorrectPasswordException("Неверный формат пароля");
+        }
         log.info("completed setPassword");
         UserEntity userEntity = userRepository.findUserEntityByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotRegisterException(authentication.getName()));
@@ -59,10 +67,5 @@ public class UserServiceImpl implements UserService {
             return newPassword;
         }
         throw new UserForbiddenException(userEntity.getId());
-    }
-
-    @Override
-    public byte[] updateUserImage(MultipartFile image) {
-        return new byte[0];
     }
 }

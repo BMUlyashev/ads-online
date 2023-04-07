@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.exception.IncorrectPasswordException;
 import ru.skypro.homework.exception.UserForbiddenException;
 import ru.skypro.homework.exception.UserNotRegisterException;
 import ru.skypro.homework.mapper.UserMapper;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
 /**
  * Тесты для {@link UserServiceImpl}
  */
@@ -88,7 +90,7 @@ class UserServiceImplTest {
 
     @Test
     void setPasswordThrowException() {
-        NewPassword password = createPassword("1", "2");
+        NewPassword password = createPassword("1", "password");
         when(authentication.getName()).thenReturn("test@test.com");
         when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.empty());
         assertThatThrownBy(() -> userService.setPassword(password, authentication)).isInstanceOf(UserNotRegisterException.class);
@@ -97,8 +99,8 @@ class UserServiceImplTest {
     @Test
     void setPassword() {
         UserEntity user = createUser(1, "firstName", "lastName", "test@test.com", "89212221133");
-        user.setPassword("$2a$12$bwUFD4eVKNv.QLSPv/jYKe0vWAkAKWGMKejRQC3FN4SufBADHuJnS"); // "test"
-        NewPassword password = createPassword("test", "2");
+        user.setPassword("$2a$12$uyCMfQZy2AnJR.CXaDfR0.p8qvIpcNPjF8htMu0pN5wyAs0WqazVa"); // "password"
+        NewPassword password = createPassword("password", "newPassword");
         when(authentication.getName()).thenReturn("test@test.com");
         when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
         NewPassword actual = userService.setPassword(password, authentication);
@@ -109,11 +111,16 @@ class UserServiceImplTest {
     @Test
     void setPasswordWrongOldPassword() {
         UserEntity user = createUser(1, "firstName", "lastName", "test@test.com", "89212221133");
-        user.setPassword("$2a$12$bwUFD4eVKNv.QLSPv/jYKe0vWAkAKWGMKejRQC3FN4SufBADHuJnS"); // "test"
-        NewPassword password = createPassword("wrong", "2");
+        user.setPassword("$2a$12$uyCMfQZy2AnJR.CXaDfR0.p8qvIpcNPjF8htMu0pN5wyAs0WqazVa"); // "password"
+        NewPassword password = createPassword("wrongPassword", "newPassword");
         when(authentication.getName()).thenReturn("test@test.com");
         when(userRepository.findUserEntityByEmail(any(String.class))).thenReturn(Optional.of(user));
         assertThatThrownBy(() -> userService.setPassword(password, authentication)).isInstanceOf(UserForbiddenException.class);
+    }
+    @Test
+    void setPasswordIncorrectPasswordFormat() {
+        NewPassword password = createPassword("wrongPassword", "short");
+        assertThatThrownBy(() -> userService.setPassword(password, authentication)).isInstanceOf(IncorrectPasswordException.class);
     }
 
 
