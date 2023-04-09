@@ -2,12 +2,9 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-/**
- * DTO для логина
- */
 @Data
-public class LoginReq {
+public class SecurityUserDto {
+    private String email;
     private String password;
-    private String username;
-
+    private Role role;
 }

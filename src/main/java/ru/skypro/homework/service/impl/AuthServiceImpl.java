@@ -1,50 +1,61 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.RegisterReq;
 import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.exception.IncorrectPasswordException;
+import ru.skypro.homework.mapper.UserMapper;
+import ru.skypro.homework.model.UserEntity;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Реализация интерфейса {@link AuthService}
+ */
+@Log
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserDetailsManager manager;
-
-    private final PasswordEncoder encoder;
-
-    public AuthServiceImpl(UserDetailsManager manager) {
-        this.manager = manager;
-        this.encoder = new BCryptPasswordEncoder();
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public boolean login(String userName, String password) {
-        if (!manager.userExists(userName)) {
+        log.info("completed login");
+        UserEntity user = userRepository.findUserEntityByEmail(userName).orElse(null);
+        if (user == null) {
             return false;
         }
-        UserDetails userDetails = manager.loadUserByUsername(userName);
-        String encryptedPassword = userDetails.getPassword();
-        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
-        return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
+
+        String encryptedPassword = user.getPassword();
+        return passwordEncoder.matches(password, encryptedPassword);
     }
 
     @Override
-    public boolean register(RegisterReq registerReq, Role role) {
-        if (manager.userExists(registerReq.getUsername())) {
+    public boolean register(RegisterReq regReq, Role role) {
+        Pattern pattern = Pattern.compile("\\w{8,}");
+        Matcher matcher = pattern.matcher(regReq.getPassword());
+        if (!matcher.matches()) {
+            log.info("incorrect password format");
+            throw new IncorrectPasswordException("Неверный формат пароля");
+        }
+        log.info("completed register");
+
+        if (userRepository.findUserEntityByEmail(regReq.getUsername()).isPresent()) {
             return false;
         }
-        manager.createUser(
-                User.withDefaultPasswordEncoder()
-                        .password(registerReq.getPassword())
-                        .username(registerReq.getUsername())
-                        .roles(role.name())
-                        .build()
-        );
+        UserEntity user = userMapper.fromRegisterReq(regReq);
+        user.setRole(role);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
         return true;
     }
 }
